@@ -7,6 +7,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from sqlalchemy import create_engine, ForeignKey
 
+
+
 app = Flask(__name__)
 # configuration
 app.config['SECRET_KEY'] = 'secretkey'
@@ -20,130 +22,131 @@ migrate = Migrate(app, db)
 
 
 
-class User(db.Model):
-    __tablename__='Users'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    # public_id = db.Column(db.String(50), unique=True)
-    name = db.Column(db.String(100))
-    email_id = db.Column(db.String(70), unique=True)
-    created_by = db.Column(db.String, default=os.getlogin())
-    created_at= db.Column(db.Time, default=datetime.datetime.now())
-    updated_at= db.Column(db.Time)
-    updated_by= db.Column(db.String)
+# class User(db.Model):
+#     __tablename__='Users'
+#
+#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     # public_id = db.Column(db.String(50), unique=True)
+#     name = db.Column(db.String(100))
+#     email_id = db.Column(db.String(70), unique=True)
+#     created_by = db.Column(db.String, default=os.getlogin())
+#     created_at= db.Column(db.Time, default=datetime.datetime.now())
+#     updated_at= db.Column(db.Time)
+#     updated_by= db.Column(db.String)
+#
+#     def __repr__(self):
+#
+#         # output= "{'ID': ,'Name': {self.name},'email': {self.email_id}}"
+#         # return output
+#         return f" ('ID: {self.id}', 'name: {self.name}', 'email_id: {self.email_id}')"
+#     # db.session.commit()
 
-    def __repr__(self):
+# class Post(db.Model):
+#     __tablename__='posts'
+#     post_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#     user_id = db.Column(db.Integer, ForeignKey(User.id))
+#     caption = db.Column(db.String(100))
+#     location= db.Column(db.String)
+#     created_by = db.Column(db.String, default=os.getlogin())
+#     created_at= db.Column(db.Time, default=datetime.datetime.now())
+#     updated_at= db.Column(db.Time)
+#     updated_by= db.Column(db.String)
 
-        # output= "{'ID': ,'Name': {self.name},'email': {self.email_id}}"
-        # return output
-        return f" ('ID: {self.id}', 'name: {self.name}', 'email_id: {self.email_id}')"
-    # db.session.commit()
-
-class Post(db.Model):
-    __tablename__='posts'
-    post_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, ForeignKey(User.id))
-    caption = db.Column(db.String(100))
-    location= db.Column(db.String)
-    created_by = db.Column(db.String, default=os.getlogin())
-    created_at= db.Column(db.Time, default=datetime.datetime.now())
-    updated_at= db.Column(db.Time)
-    updated_by= db.Column(db.String)
-
-@app.route('/read', methods=['GET'])
-def display():
-
-    # trial= User(name= ' Aryan',id= 4)
-    db.create_all()
-    # db.session.delete()
-    # db.session.add(trial)
-    # User.query.filter_by(id = 4).delete()
-    db.session.commit()
-
-    data = User.query.all()
-
-    out={}
-    print(data[1])
-    i=0
-    for x in data:
-        i+=1
-        temp={'ID': x.id,
-              'Name': x.name,
-              'Email_id': x.email_id}
-        out[f'User {i}']= temp
-
-    return (out)
-
-@app.route('/create', methods=['Post'])
-def new():
-    data= request.form
-    name1= data.get("name")
-    email1= data.get("email")
-
-    present = User.query.filter_by(email_id= email1).first()
-
-    if not present:
-        new = User(name= name1, email_id= email1)
-        db.session.add(new)
-        db.session.commit()
-
-        return make_response("User successfully added",201)
-    else:
-        return make_response("User already present",202)
-
-@app.route('/update', methods=['Put'])
-def change():
-    data= request.form
-    user_id= data.get("user_id")
-    col_to_change= data.get("change_in")
-    new= data.get("new_data")
-    present = User.query.filter_by(id=user_id).first()
-    if not present:
-        return make_response("User not present",202)
-    else:
-        if col_to_change == "email":
-            present1 = User.query.filter_by(email_id= new).first()
-            if present1:
-                return make_response("Email already registered", 202)
-            else:
-                present.email_id= new
-                present.updated_at= datetime.datetime.now()
-                present.updated_by= os.getlogin()
-                db.session.commit()
-                return make_response("Data updated successfully",201)
-        elif col_to_change == "name":
-            present.name = new
-            present.updated_at = datetime.datetime.now()
-            present.updated_by = os.getlogin()
-            db.session.commit()
-            return make_response("Data updated successfully", 201)
-        else:
-            return make_response("No such Attribute present", 202)
-
-@app.route('/delete', methods=['Delete'])
-def remove():
-    data=request.form
-    uid= data.get("user_id")
-    print(uid)
-    present = User.query.filter_by(id=uid).first()
-    if not present:
-        return make_response("User not present", 202)
-    else:
-        db.session.delete(present)
-        db.session.commit()
-        return make_response("User deleted successfully",201)
-
-
-
-
-
-    # change= data.get("new_name")
-    # # print(id, email)
-    # if email:
-    #     present = User.query.filter_by(email_id=email).first()
-    #     if not present:
-    #         return make_response("User not present",202)
-    #     else:
+# @app.route('/read', methods=['GET'])
+# def read():
+#
+#     # trial= User(name= ' Aryan',id= 4)
+#     db.create_all()
+#     # db.session.delete()
+#     # db.session.add(trial)
+#     # User.query.filter_by(id = 4).delete()
+#     db.session.commit()
+#
+#     data = User.query.all()
+#
+#     out={}
+#     print(data[1])
+#     i=0
+#     for x in data:
+#         i+=1
+#         temp={'ID': x.id,
+#               'Name': x.name,
+#               'Email_id': x.email_id}
+#         out[f'User {i}']= temp
+#
+#     return (out)
+#
+# @app.route('/create', methods=['Post'])
+# def new():
+#     data= request.form
+#     name1= data.get("name")
+#     email1= data.get("email")
+#
+#     present = User.query.filter_by(email_id= email1).first()
+#
+#     if not present:
+#         new = User(name= name1, email_id= email1)
+#         db.session.add(new)
+#         db.session.commit()
+#
+#         return make_response("User successfully added",201)
+#     else:
+#         return make_response("User already present",202)
+#
+# @app.route('/', methods=['Put'])
+# def update_user():
+#     data= request.form
+#     user_id= data.get("user_id")
+#     col_to_change= data.get("change_in")
+#     new= data.get("new_data")
+#     present = User.query.filter_by(id=user_id).first()
+#     if not present:
+#         return make_response("User not present",202)
+#     else:
+#         if col_to_change == "email":
+#             present1 = User.query.filter_by(email_id= new).first()
+#             if present1:
+#                 return make_response("Email already registered", 202)
+#             else:
+#                 present.email_id= new
+#                 present.updated_at= datetime.datetime.now()
+#                 present.updated_by= os.getlogin()
+#                 db.session.commit()
+#                 return make_response("Data updated successfully",201)
+#         elif col_to_change == "name":
+#             present.name = new
+#             present.updated_at = datetime.datetime.now()
+#             present.updated_by = os.getlogin()
+#             db.session.commit()
+#             return make_response("Data updated successfully", 201)
+#         else:
+#             return make_response("No such Attribute present", 202)
+#
+# @app.route('/delete', methods=['Delete'])
+# def remove():
+#     data=request.form
+#     uid= data.get("user_id")
+#     print(uid)
+#     present = User.query.filter_by(id=uid).first()
+#     if not present:
+#         return make_response("User not present", 202)
+#     else:
+#         db.session.delete(present)
+#         db.session.commit()
+#         return make_response("User deleted successfully",201)
+#
+#
+#
+#
+#
+#     # change= data.get("new_name")
+#     # # print(id, email)
+#     # if email:
+#     #     present = User.query.filter_by(email_id=email).first()
+#     #     if not present:
+#     #         return make_response("User not present",202)
+#     #     else:
 
 @app.route('/newpost', methods=['Post'])
 def newposts():
