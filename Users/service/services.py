@@ -1,12 +1,6 @@
-import json
 import datetime
 import os
-
 from flask import Flask, request, jsonify, make_response
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from sqlalchemy import create_engine, ForeignKey
-
 
 
 def read(db,User):
@@ -16,11 +10,8 @@ def read(db,User):
         :param User:
         :return:
         '''
-    # trial= User(name= ' Aryan',id= 4)
+
     db.create_all()
-    # db.session.delete()
-    # db.session.add(trial)
-    # User.query.filter_by(id = 4).delete()
     db.session.commit()
 
     data = User.query.all()
